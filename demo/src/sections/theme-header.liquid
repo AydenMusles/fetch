@@ -1,0 +1,68 @@
+<!-- /snippets/{{ section.id }}.liquid -->
+
+{% assign enable_search = section.settings.enable_search %}
+
+<header class="theme-header" role="banner">
+  <div class="container">
+
+    <div class="row flex v-center h-space-between">
+      <div class="column s12 s-center">
+        {% include 'theme-logo' %}
+      </div>
+
+      <div class="column s12 s-center">
+        {% if customer %}
+          <a href="/account" data-trigger="popup" data-target="#PopupAccount">{{ 'account.general.title' | t }}</a>
+        {% else %}
+          <a href="/account">{{ 'account.login.title' | t }}</a>
+        {% endif %}
+
+        <a href="/cart" id="CartLink" data-trigger="popup" data-target="#PopupCart" aria-controls="Cart" aria-expanded="false" class="v-middle">
+          {{ 'cart.title' | t }}
+          <span data-cart-item-count>{{ cart.item_count }}</span>
+          (<span data-cart-total>{{ cart.total_price | money_with_currency }}</span>)
+        </a>
+
+        <div class="s-show margin-top-2x">
+          <a href="#PopupNavigation" data-trigger="popup" data-target="#PopupNavigation">
+            {{ 'common.menu' | t }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row flex v-center h-space-between s-hide">
+      <div class="column left">
+        {% include 'theme-nav-main' %}
+      </div>
+      {% if enable_search %}
+        <div class="column right">
+          {% include 'form-search' %}
+        </div>
+      {% endif %}
+    </div>
+
+    <hr>
+
+  </div>
+</header>
+
+{% include 'theme-nav-toggled' %}
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_search",
+        "label": "Enable search",
+        "default": true
+      }
+    ]
+  }
+{% endschema %}

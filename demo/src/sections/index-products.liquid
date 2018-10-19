@@ -1,0 +1,72 @@
+<!-- sections/index-products.liquid -->
+
+{% assign collection = collections[section.settings.collection] %}
+{% assign title = section.settings.title | default: collection.title %}
+{% assign limit = section.settings.limit %}
+
+<section class="container l">
+  {% if title != blank %}
+    <header>
+      <h2>{{ title }}</h2>
+    </header>
+  {% endif %}
+
+  <div class="row">
+    {% for product in collection.products limit: limit %}
+      {% include 'collection-product' %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Featured products",
+    "class": "index-section-products",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "Featured products"
+      },
+      {
+        "id": "collection",
+        "type": "collection",
+        "label": "Collection"
+      },
+      {
+        "type": "select",
+        "id": "limit",
+        "label": "Products to show",
+        "default": "6",
+        "options": [
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "6",
+            "label": "6"
+          },
+          {
+            "value": "9",
+            "label": "9"
+          },
+          {
+            "value": "12",
+            "label": "12"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured products",
+        "category": "Collections",
+        "settings": {
+          "collection": "frontpage"
+        }
+      }
+    ]
+  }
+{% endschema %}

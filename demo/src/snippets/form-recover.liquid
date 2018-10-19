@@ -1,0 +1,13 @@
+<!-- /snippets/form-recover.liquid -->
+
+<div id="PasswordRecoverForm">
+  {% form 'recover_customer_password' %}
+    <h4>{{ 'account.recover.message' | t }}</h4>
+
+    <label for="RecoverEmail">{{ 'form.email' | t }}</label>
+    <input type="email" value="" name="email" id="RecoverEmail" autocorrect="off" autocapitalize="off" autofocus>
+
+    <button type="submit" class="wide">{{ 'account.recover.submit' | t }}</button>
+
+  {% endform %}
+</div>

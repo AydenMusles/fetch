@@ -1,0 +1,13 @@
+<!-- /templates/{{ template }}.liquid -->
+
+<section class="container l">
+  <div class="row">
+
+    {% for collection in collections %}
+      {% unless collection.handle == 'all' or collection.handle == 'frontpage' %}
+        {% include 'collection-list' %}
+      {% endunless %}
+    {% endfor %}
+
+  </div>
+</section>

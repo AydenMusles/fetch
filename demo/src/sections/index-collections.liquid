@@ -1,0 +1,65 @@
+<!-- sections/index-collections.liquid -->
+
+{% assign title = section.settings.title %}
+
+<section class="container l">
+  {% if title != blank %}
+    <header>
+      <h2>{{ title }}</h2>
+    </header>
+  {% endif %}
+
+  {% if section.blocks.size > 0 %}
+    <div class="row">
+      {% for block in section.blocks limit: section.blocks.size %}
+        {% assign collection = collections[block.settings.collection] %}
+        {% include 'collection-list' %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+  {
+    "name": "Featured collections",
+    "class": "index-section-collections",
+    "max_blocks": 12,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "featured_collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "label": "Collection",
+            "id": "collection",
+            "type": "collection"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured collections",
+        "category": "Collections",
+        "blocks": [
+          {
+            "type": "featured_collection"
+          },
+          {
+            "type": "featured_collection"
+          },
+          {
+            "type": "featured_collection"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

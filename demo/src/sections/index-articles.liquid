@@ -1,0 +1,72 @@
+<!-- sections/index-articles.liquid -->
+
+{% assign blog = blogs[section.settings.blog] %}
+{% assign title = section.settings.title | default: blog.title %}
+{% assign limit = section.settings.limit %}
+
+<section class="container l">
+  {% if title != blank %}
+    <header>
+      <h2>{{ title }}</h2>
+    </header>
+  {% endif %}
+
+  <div class="row">
+    {% for article in blog.articles limit: limit %}
+      {% include 'blog-article' %}
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Featured articles",
+    "class": "index-section-articles",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "id": "blog",
+        "type": "blog",
+        "label": "Blog"
+      },
+      {
+        "type": "select",
+        "id": "limit",
+        "label": "Articles to show",
+        "default": "3",
+        "options": [
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "6",
+            "label": "6"
+          },
+          {
+            "value": "9",
+            "label": "9"
+          },
+          {
+            "value": "12",
+            "label": "12"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Featured articles",
+        "category": "Blogs",
+        "settings": {
+          "blog": "News",
+          "limit": "3"
+        }
+      }
+    ]
+  }
+{% endschema %}

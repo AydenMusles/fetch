@@ -1,0 +1,10 @@
+<!-- /snippets/theme-nav-toggled.liquid -->
+
+<nav id="PopupNavigation" class="theme-nav-toggled drawer from-left" role="navigation">
+  <div class="inner">
+    <ul>
+      {% include 'theme-nav' with 'toggled' %}
+    </ul>
+    <a href="#close" class="drawer-close" data-close aria-label="{{ 'common.close' | t }}">{{ 'common.close' | t }}</a>
+  </div>
+</nav>
