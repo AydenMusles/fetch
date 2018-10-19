@@ -1,0 +1,44 @@
+<!-- /templates/{{ template }}.liquid -->
+
+{% comment %}
+  Useful tool to display tags inside a collection, for debugging
+{% endcomment %}
+
+{% layout none %}
+{% assign pagination = 50 %}
+
+<h1>{{ collection.title }} ({{ collection.products_count}} products)</h1>
+<label for="CollectionSwitcher">Switch to:</label>
+<select id="CollectionSwitcher" onchange="if (this.value) window.location.href=this.value">
+  {% for select_collection in collections %}
+    <option value="{{ select_collection.url }}?view=tags"{% if select_collection.handle == collection.handle %} selected{% endif %}>{{ select_collection.title }}</option>
+  {% endfor %}
+</select>
+<button onclick="window.location.href='{{ collection.url }}'">View in store</button>
+<button onclick="window.open('/admin/themes/{{ theme.id }}/editor#/collections/{{ collection.handle }}')">Open collection in theme editor</button>
+<button onclick="window.open('/admin/collections/{{ collection.id }}')">Open collection in admin</button>
+
+{% paginate collection.products by pagination %}
+  <h2>Entire collection tags ({{ collection.all_tags.size }}):</h2>
+  <ul>
+    {% for tag in collection.all_tags %}
+      <li>{{ tag }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Collection tags in page {{ paginate.current_page }} ({{ collection.tags.size }}):</h2>
+  <ul>
+    {% for tag in collection.tags %}
+      <li>{{ tag }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Currently applied tags ({% if current_tags %}{{ current_tags.size }}{% else %}0{% endif %}):</h2>
+  <ul>
+    {% for tag in current_tags %}
+      <li>{{ tag }}</li>
+    {% endfor %}
+  </ul>
+
+  {{ paginate | default_pagination }}
+{% endpaginate %}

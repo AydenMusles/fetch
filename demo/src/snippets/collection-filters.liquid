@@ -1,0 +1,111 @@
+<!-- /snippets/collection-filters.liquid -->
+
+{% assign filter_count = 0 %}
+
+{% comment %}
+  Count to check if there are any blocks of filters
+{% endcomment %}
+{% for block in section.blocks %}
+  {% assign menu_count = 0 %}
+  {% for i in (1..filter_settings_input_amount) %}
+    {% assign menu_key = 'menu_' | append: i %}
+    {% assign menu = linklists[block.settings[menu_key]] %}
+
+    {% if menu != blank %}
+      {% assign menu_count = menu_count | plus: 1 %}
+    {% endif %}
+  {% endfor %}
+
+  {% if menu_count > 0 %}
+    {% assign filter_count = filter_count | plus: 1 %}
+  {% endif %}
+{% endfor %}
+
+{% comment %}
+  If there are blocks of filters render them
+{% endcomment %}
+{% if filter_count > 0 %}
+  {% assign filter_translation = 'collection.fetch.title' | t %}
+  <label>
+    {{ filter_translation }}
+  </label>
+
+  <div id="CollectionFilters" class="collection-filters invisible">
+    {% assign filter_count = 0 %}
+    {% comment %}
+      Count to see if the current filter block has filters in this collection
+    {% endcomment %}
+    {% for block in section.blocks %}
+      {% assign has_filter = false %}
+      {% assign filter_id = block.settings.title | default: block.id | handleize | replace: '-', '_' %}
+
+      {% assign menu_count = 0 %}
+      {% for i in (1..filter_settings_input_amount) %}
+        {% assign menu_key = 'menu_' | append: i %}
+        {% assign menu = linklists[block.settings[menu_key]] %}
+        {% assign show_filter = false %}
+
+        {% if menu != blank %}
+          {% for link in menu.links %}
+            {% if collection.all_tags contains link.title or show_all_tags %}
+              {% assign show_filter = true %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% if show_filter %}
+          {% assign menu_count = menu_count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+      {% if menu_count > 0 %}
+        {% assign has_filter = true %}
+        {% assign filter_count = filter_count | plus: 1 %}
+      {% endif %}
+
+
+      {%- comment -%}
+        If the current filter block has filters in it then render the block.
+      {%- endcomment -%}
+      {% if has_filter %}
+        <p {{ block.shopify_attributes }}>
+          {{ block.settings.title | default: filter_translation }}
+        </p>
+
+        <div class="collection-filter">
+          {% for i in (1..filter_settings_input_amount) %}
+            {% assign menu_key = 'menu_' | append: i %}
+            {% assign menu = linklists[block.settings[menu_key]] %}
+            {% assign filter_id = menu.title | handleize | replace: '-', '_' %}
+
+            {% if menu != blank %}
+              <div class="collection-filter-content">
+                <ul>
+                  {% for link in menu.links %}
+                    {% assign link_handle = link.title | handleize %}
+                    {% assign show_filter = false %}
+                    {% if block.type == 'tag' %}
+                      {% if collection.all_tags contains link.title or show_all_tags %}
+                        {% assign show_filter = true %}
+                      {% endif %}
+                    {% elsif block.type == 'variant' %}
+                      {% assign show_filter = true %}
+                    {% endif %}
+                    {% if show_filter %}
+                      {% assign tag = link.title | handleize %}
+                      <li>
+                        <input id="{{ filter_id }}_{{ link_handle }}" name="{{ filter_id }}" type="checkbox" {% if block.settings.radio %}data-exclusive-filter="{{ filter_id }}"{% else %}data-filter="{{ filter_id }}"{% endif %} data-filter-value="{{ tag }}"{% if current_tags contains link.title %} checked="checked"{% endif %} autocomplete="off">
+                        <label for="{{ filter_id }}_{{ link_handle }}">{{ link.title }}</label>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <p><a data-clear-filters>{{ 'collection.fetch.clear' | t }}</a></p>
+  </div>
+{% endif %}

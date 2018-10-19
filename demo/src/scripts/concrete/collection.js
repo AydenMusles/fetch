@@ -18,7 +18,6 @@ concrete.Collection = (function() {
     },
 
     _onSortByChange: function() {
-
       var sortBy = this._getSortBy();
       this.$container.trigger({
         type: 'sortByChange',
@@ -26,7 +25,10 @@ concrete.Collection = (function() {
       });
 
       concrete.urlParams.sort_by = this.currentSortBy = sortBy;
-      location.search = jQuery.param(concrete.urlParams);
+      // Push the sort method to the browser history and url without reloading the page (used for ajax collections)
+      concrete.pushNewUrl(concrete.replaceUrlParameter(window.location.href, 'sort_by', this.currentSortBy), 'replace');
+      // Reload the page (used for non-ajax collections)
+      // location.search = jQuery.param(concrete.urlParams);
     },
 
     _onViewByChange: function(evt) {

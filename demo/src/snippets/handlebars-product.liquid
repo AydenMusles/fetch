@@ -1,0 +1,65 @@
+<!-- /snippets/handlebars-product.liquid -->
+
+{% assign column_width = column_width | default: 'column l4 m6 s12' %}
+
+<script data-collection-template type="text/x-handlebars-template">
+  {% raw %}
+    {{#if products.length}}
+      {{#each products}}
+        <div class="collection-product center margin-bottom-3x {% endraw %}{{ column_width }}{% raw %}{{#unless this.available}} sold_out{{/unless}}">
+          {{#size this.images 0}}
+            <a href="{{this.url}}">
+              <img src="{{this.images.[0].src}}" alt="{{this.images.[0].alt}}">
+            </a>
+          {{/size}}
+
+          <p>
+            <a href="{{this.url}}">{{this.title}}</a><br>
+
+            {{money this.price}}
+
+            {{#if on_sale}}
+              <span class="hidden">{% endraw %}{{ 'product.original_price' | t }}{% raw %}</span>
+              <s>{{money this.compare_at_price}}</s>
+            {{/if}}
+          </p>
+
+          <p>
+            <button {{#if sold_out}}class="disabled" disabled{{else}}type="submit" name="add" data-quick-add="{{this.first_available_variant.id }}"{{/if}}>
+              <span id="AddToCartText">{{#if sold_out}}{% endraw %}{{ 'product.sold_out' | t }}{% raw %}{{else}}{% endraw %}{{ 'product.add_to_cart' | t }}{% raw %}{{/if}}</span>
+            </button>
+          </p>
+        </div>
+      {{/each}}
+
+      {{#unless loadingCompleted}}
+        <div class="placeholder column l12 center hidden">
+          <div class="row">
+            <div class="column l3 m2 s12 s-hide"></div>
+            <div class="column l6 m8 s12 center">
+              <p class="h3 w-bold margin-bottom-0x">{% endraw %}{{ 'collection.fetch.loading.title' | t }}{% raw %}</p>
+              <p class="margin-bottom-2x">{% endraw %}{{ 'collection.fetch.loading.looking' | t }}{% raw %} {{productsReturned}} {% endraw %}{{ 'collection.fetch.loading.of' | t }}{% raw %} {{productsCount}} {% endraw %}{{ 'collection.fetch.loading.criteria' | t }}{% raw %}</p>
+            </div>
+            <div class="column l3 m2 s12 s-hide"></div>
+          </div>
+        </div>
+      {{/unless}}
+    {{else}}
+      {{#if loadingCompleted}}
+        <div class="column l3 m2 s12 s-hide"></div>
+        <div class="column l6 m8 s12 center">
+          <p class="margin-bottom-2x">{% endraw %}{{ 'collection.fetch.no_matches' | t }}{% raw %}</p>
+          <button data-clear-filters class="margin-bottom-5x">{% endraw %}{{ 'collection.fetch.clear' | t }}{% raw %}</button>
+        </div>
+        <div class="column l3 m2 s12 s-hide"></div>
+      {{else}}
+        <div class="column l3 m2 s12 s-hide"></div>
+        <div class="column l6 m8 s12 center">
+          <p class="h3 w-bold margin-bottom-0x">{% endraw %}{{ 'collection.fetch.loading.title' | t }}{% raw %}</p>
+          <p class="margin-bottom-2x">{% endraw %}{{ 'collection.fetch.loading.looking' | t }}{% raw %} {{productsReturned}} {% endraw %}{{ 'collection.fetch.loading.of' | t }}{% raw %} {{productsCount}} {% endraw %}{{ 'collection.fetch.loading.criteria' | t }}{% raw %}</p>
+        </div>
+        <div class="column l3 m2 s12 s-hide"></div>
+      {{/if}}
+    {{/if}}
+  {% endraw %}
+</script>

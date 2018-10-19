@@ -37,11 +37,13 @@ concrete.urlParams = {};
 // =require concrete/product.js
 // =require concrete/empty-section.js
 
-
 // Initialize on document ready
 $(document).ready(function() {
   // Register sections js
   var sections = new concrete.Sections();
   sections.register('product', concrete.Product);
   sections.register('collection', concrete.Collection);
+
+  // Handlebars helpers
+  concrete.handlebarsHelpers();
 })

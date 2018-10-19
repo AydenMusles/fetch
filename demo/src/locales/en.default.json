@@ -145,6 +145,7 @@
     }
   },
   "collection": {
+    "loading": "Loading products...",
     "no_matches": "Sorry, there are no products in this collection",
     "with_count": {
       "one": "{{ count }} item",
@@ -166,6 +167,20 @@
       "price-descending": "Price, high to low",
       "created-descending": "Date, new to old",
       "created-ascending": "Date, old to new"
+    },
+    "fetch": {
+      "title": "Filter",
+      "all": "All",
+      "tags": "Shop by",
+      "sale": "Only show items on sale",
+      "clear": "Reset filters",
+      "no_matches": "Sorry, there are no products that match this filtering criteria",
+      "loading": {
+        "title": "Loading products",
+        "looking": "Loaded",
+        "of": "of",
+        "criteria": "products"
+      }
     }
   },
   "product": {

@@ -1,0 +1,46 @@
+{%- assign on_sale = false -%}
+{%- assign sold_out = true -%}
+
+{%- if product.compare_at_price > product.price -%}
+  {%- assign on_sale = true -%}
+{%- endif -%}
+{%- if product.available -%}
+  {%- assign sold_out = false -%}
+{%- endif -%}
+
+{
+"available": {{- product.available -}},
+"handle": "{{- product.handle -}}",
+"created_at": "{{- product.created_at | date -}}",
+"images": [{%- for image in product.images limit: 1 -%}{
+    "src": "{{- image.src | img_url: '1024x1024' -}}"
+  }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+],
+"options": [{%- for option in product.options_with_values -%}{
+    "name": {{- option.name | json -}},
+    "value": {{- option.value | json -}},
+    "index": {{- forloop.index -}}
+  }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+],
+"product_type": "{{- product.type -}}",
+"price": {{- product.price -}},
+"on_sale": {{- on_sale -}},
+"price_varies": {{- product.price_varies -}},
+"compare_at_price": {%- if product.compare_at_price -%}{{- product.compare_at_price -}}{%- else -%}null{%- endif -%},
+"tags": [{%- for tag in product.tags -%}{{- tag | json -}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+"title": {{- product.title | json -}},
+"vendor": {%- unless product.vendor contains shop.name -%}{{- product.vendor | json -}}{%- endunless -%},
+"variants_count": {{- product.variants.size | plus: 0 -}},
+"variants": [{%- for variant in product.variants -%}
+  {
+    "av": {{- variant.available -}},
+    "id": {{- variant.id -}},
+    "option1": {{- variant.option1 | json -}},
+    "option2": {{- variant.option2 | json -}},
+    "option3": {{- variant.option3 | json -}},
+    "index": {{- forloop.index -}},
+    "price": "{{- variant.price -}}",
+    "title": {{- variant.title | json -}}
+  }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+]
+}

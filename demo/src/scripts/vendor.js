@@ -14,6 +14,16 @@
 // =require vendor/handlebars.js
 
 /*!
+ * Queue.js
+ */
+// =require vendor/Queue.js
+
+/*!
+ * Fetch.js
+ */
+// =require vendor/Fetch.js
+
+/*!
  * lodash.min.js
  */
 // =require vendor/lodash.min.js

@@ -1,0 +1,19 @@
+{%- layout none -%}
+{%- assign price_varies = false -%}
+{%- assign pagination = 50 -%}
+{%- assign offset = 0 -%}
+
+{%- if canonical_url contains 'handle=' -%}
+  {%- assign pagination = canonical_url | split: 'handle=' | last | split: '&' | first | plus: 0 -%}
+{%- endif -%}
+{%- if canonical_url contains 'order=' -%}
+  {%- assign offset = canonical_url | split: 'order=' | last | split: '&' | first | plus: 0 -%}
+{%- endif -%}
+
+{%- paginate collection.products by pagination -%}
+{
+  "products": [{%- for product in collection.products offset: offset -%}
+    {%- include 'product-json' -%}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+  ]
+}
+{%- endpaginate -%}

@@ -1,0 +1,83 @@
+<!-- /snippets/handlebars-pagination.liquid -->
+
+<script data-pagination-template type="text/x-handlebars-template">
+  {% raw %}
+    <div class="row border-top border-bottom padding-top-2x padding-bottom-2x no-select">
+      <div class="column l3 m4 s12 s-hide">
+        {{#compare currentTotal '>' 0}}Page {{current}} of {{currentTotal}}{{/compare}}
+      </div>
+
+      <div class="column l9 m8 s12 pagination right s-center">
+        <ul class="inline">
+          {{#compare currentTotal '>' 7}}
+            {{#compare current '!=' 1}}
+              <span class="prev">
+                <a class="prev" data-page="{{math current '-' 1}}" title="{% endraw %}{{ 'common.pagination.previous' | t }}{% raw %}">
+                  {% endraw %}&laquo; {{ 'common.pagination.previous' | t }}{% raw %}
+                </a>
+              </span>
+            {{/compare}}
+            {{#compare (math current '-' 2) '>=' 1}}
+              <span class="page">
+                <a data-page="1">1</a>
+              </span>
+            {{/compare}}
+            {{#compare (math current '-' 3) '>=' 1}}
+              <span class="deco">&hellip;</span>
+            {{/compare}}
+          {{/compare}}
+
+          {{#compare currentTotal '==' 7}}
+            {{#repeat 7 0 1 currentTotal}}
+              <span class="page{{#compare this '==' ../current}} current{{/compare}}">
+                {{#compare this '!=' ../current}}<a data-page="{{this}}">{{/compare}}{{this}}{{#compare this '!=' ../current}}</a>{{/compare}}
+              </span>
+            {{/repeat}}
+          {{else}}
+            {{#compare (math current '-' 3) '>=' 1}}
+              {{#compare (math current '+' 3) '<=' currentTotal}}
+                {{#repeat 3 (math current '-' 2) 1 currentTotal}}
+                  <span class="page{{#compare this '==' ../current}} current{{/compare}}">
+                    {{#compare this '!=' ../current}}<a data-page="{{this}}">{{/compare}}{{this}}{{#compare this '!=' ../current}}</a>{{/compare}}
+                  </span>
+                {{/repeat}}
+              {{else}}
+                {{#repeat 3 (math current '-' 1) 1 currentTotal}}
+                  <span class="page{{#compare this '==' ../current}} current{{/compare}}">
+                    {{#compare this '!=' ../current}}<a data-page="{{this}}">{{/compare}}{{this}}{{#compare this '!=' ../current}}</a>{{/compare}}
+                  </span>
+                {{/repeat}}
+              {{/compare}}
+            {{else}}
+              {{#repeat 3 (math current '-' 1) 1 currentTotal}}
+                <span class="page{{#compare this '==' ../current}} current{{/compare}}">
+                  {{#compare this '!=' ../current}}<a data-page="{{this}}">{{/compare}}{{this}}{{#compare this '!=' ../current}}</a>{{/compare}}
+                </span>
+              {{/repeat}}
+            {{/compare}}
+          {{/compare}}
+
+          {{#compare currentTotal '>' 7}}
+            {{#compare (math current '+' 3) '<=' currentTotal}}
+              <span class="deco">&hellip;</span>
+            {{/compare}}
+            {{#compare (math current '+' 2) '<=' currentTotal}}
+              <span class="page">
+                <a data-page="{{currentTotal}}">
+                  {{currentTotal}}
+                </a>
+              </span>
+            {{/compare}}
+            {{#compare current '!=' currentTotal}}
+              <span class="next">
+                <a class="next" data-page="{{math current '+' 1}}" title="{% endraw %}{{ 'common.pagination.next' | t }}{% raw %}">
+                  {% endraw %}{{ 'common.pagination.next' | t }} &raquo;{% raw %}
+                </a>
+              </span>
+            {{/compare}}
+          {{/compare}}
+        </ul>
+      </div>
+    </div>
+  {% endraw %}
+</script>

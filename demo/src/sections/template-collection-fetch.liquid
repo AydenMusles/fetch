@@ -1,0 +1,311 @@
+<!-- /sections/{{ section.id }}.liquid -->
+
+{% assign column_width = 'column l3 m4 s6' %}
+{% assign pagination = 48 %}
+
+{% assign filter_settings_input_amount = 1 %}
+{% assign collection_image_s = blank %}
+{% assign show_all_tags = false %}
+{% assign show_tags = section.settings.tags %}
+
+{% paginate collection.products by pagination %}
+  <div class="container l padding-top-3x padding-bottom-3x s-padding-top-0x" data-section-type="collection">
+    <div class="row">
+      <aside class="column l3 m3 s12">
+        <header>
+          <h1 class="h3 no-margin t-uppercase">
+            {{ collection.title }}
+          </h1>
+
+          {% if collection.description != blank %}
+            <div class="rte">
+              {{ collection.description }}
+            </div>
+          {% endif %}
+        </header>
+
+        {% include 'collection-filters' %}
+      </aside>
+
+      <section class="column l9 m9 s12">
+        <div class="relative">
+          <div class="row margin-bottom-2x padding-top-1x padding-bottom-1x">
+            <div class="column l6 s12"></div>
+            <div class="column l6 s12 right s-left">
+              {% include 'collection-sort' %}
+            </div>
+          </div>
+        </div>
+
+        <div class="row" data-collection-container>
+          {% if collection.products.size > 0 %}
+            <p>{{ 'collection.loading' | t }}</p>
+          {% else %}
+            <div class="column l3 m2 s12 s-hide"></div>
+            <div class="column l6 m8 s12 center">
+              <p class="h3 w-bold margin-bottom-0x">{{ 'collection.no_matches.title' | t }}</p>
+              <p class="margin-bottom-2x">{{ 'collection.no_matches.message' | t }}</p>
+              <a href="/collections/all" class="button margin-bottom-5x">{{ 'collection.all' | t }}</a>
+            </div>
+            <div class="column l3 m2 s12 s-hide"></div>
+          {% endif %}
+        </div>
+      </section>
+    </div>
+
+    <section data-pagination-container></section>
+  </div>
+{% endpaginate %}
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    {% assign url = canonical_url | remove: 'https://' | remove: shop.domain | split: 'shopifypreview.com' | last | split: '?' %}
+
+    // Don't load the filters inside the theme editor (it's too much for browsers to handle)
+    if (window.self == window.top) {
+      window.filters = new Fetch({
+        options: {
+          resourceUrl: '{{ url[0] }}',
+          productCount: {{ collection.products_count }},
+          paginationLimit: 250,
+          pseudoPagination: 48,
+          paginationMethod: 'paginate',
+          filterOutOfStock: {{ section.settings.sold_out }},
+          {% if url[1] != blank %}collectionQuery: '{{ url[1] | prepend: '&' }}'{% endif %}
+        },
+        filters: {
+          {% for block in section.blocks %}
+            {% assign filter_id = block.settings.title | default: block.id | handleize | replace: '-', '_' %}
+            {% if block.type == 'tag' or block.type == 'variant' %}
+              {% for i in (1..filter_settings_input_amount) %}
+                {% assign menu_key = 'menu_' | append: i %}
+                {% assign menu = linklists[block.settings[menu_key]] %}
+                {% assign filter_id = menu.title | handleize | replace: '-', '_' %}
+
+                {% if menu != blank %}
+                  {% if block.type == 'tag' %}
+                    {{ filter_id }}: {
+                      type: 'tag',
+                    },
+                  {% else %}
+                    {{ filter_id }}: {
+                      type: 'variant',
+                      name: '{{ menu.title | escape }}',
+                    },
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% elsif block.type == 'price' %}
+              {% if block.settings.price %}
+                {{ filter_id }}: {
+                  type: '{{ block.type }}',
+                },
+              {% endif %}
+              {% if block.settings.sale %}
+                {{ filter_id }}_sale: {
+                  type: 'sale',
+                },
+              {% endif %}
+            {% elsif block.type == 'type' or block.type == 'vendor' %}
+              {{ filter_id }}: {
+                type: '{{ block.type }}',
+                element: 'checkbox'
+              },
+            {% endif %}
+          {% endfor %}
+        },
+        firstPage: [
+          {%- for product in collection.products -%}
+            {%- include 'product-json' -%}{%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ]
+      });
+    }
+  });
+</script>
+
+{% include 'handlebars-product' %}
+{% include 'handlebars-pagination' %}
+
+{% schema %}
+  {
+    "name": "Fetch collection template",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Fetch collection template",
+        "info": "These settings affect all collections using this template"
+      },
+      {
+        "type": "checkbox",
+        "id": "sold_out",
+        "label": "When filtering, hide items that are out of stock",
+        "default": true
+      }
+    ],
+    "blocks": [
+      {
+        "type": "price",
+        "name": "Price filters",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Price filters",
+            "info": "Filter products based on their price"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Price"
+          },
+          {
+            "type": "checkbox",
+            "id": "price",
+            "label": "Display price slider",
+            "default": true
+          },
+          {
+            "type": "checkbox",
+            "id": "sale",
+            "label": "Display on sale filter",
+            "default": true
+          },
+          {
+            "type": "header",
+            "content": "Checkboxes"
+          },
+          {
+            "type": "range",
+            "id": "max_price",
+            "min": 0,
+            "max": 1000,
+            "step": 10,
+            "label": "Max price",
+            "default": 500
+          },
+          {
+            "type": "range",
+            "id": "price_steps",
+            "min": 10,
+            "max": 100,
+            "step": 5,
+            "label": "Price range steps",
+            "default": 50
+          }
+        ]
+      },
+      {
+        "type": "tag",
+        "name": "Tag filters",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Tag filters",
+            "info": "Filter products based on their tags, sourced from link lists"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "checkbox",
+            "id": "radio",
+            "label": "Prevent multiple filters from being selected",
+            "default": false
+          },
+          {
+            "type": "link_list",
+            "id": "menu_1",
+            "label": "Filtering list"
+          }
+        ]
+      },
+      {
+        "type": "type",
+        "name": "Type filters",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Type filters",
+            "info": "Filter products based on their type"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Type"
+          },
+          {
+            "type": "checkbox",
+            "id": "radio",
+            "label": "Prevent multiple filters from being selected",
+            "default": false
+          }
+        ]
+      },
+      {
+        "type": "variant",
+        "name": "Variant filters",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Variant filters",
+            "info": "Filter products based on their variant options"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "checkbox",
+            "id": "radio",
+            "label": "Prevent multiple filters from being selected",
+            "default": false
+          },
+          {
+            "type": "checkbox",
+            "id": "tags",
+            "label": "Limit filters to available product tags",
+            "info": "This is an experimental feature",
+            "default": false
+          },
+          {
+            "type": "link_list",
+            "id": "menu_1",
+            "label": "Variant options",
+            "info": "The title of this menu should match the variant option name of your products"
+          }
+        ]
+      },
+      {
+        "type": "vendor",
+        "name": "Vendor filters",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "header",
+            "content": "Vendor filters",
+            "info": "Filter products based on their vendor"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Vendor"
+          },
+          {
+            "type": "checkbox",
+            "id": "radio",
+            "label": "Prevent multiple filters from being selected",
+            "default": false
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}
