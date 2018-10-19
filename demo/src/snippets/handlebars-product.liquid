@@ -25,7 +25,7 @@
           </p>
 
           <p>
-            <button {{#if sold_out}}class="disabled" disabled{{else}}type="submit" name="add" data-quick-add="{{this.first_available_variant.id }}"{{/if}}>
+            <button {{#if sold_out}}class="disabled" disabled{{else}}type="submit" name="add" data-quick-add="{{this.first_available_variant}}"{{/if}}>
               <span id="AddToCartText">{{#if sold_out}}{% endraw %}{{ 'product.sold_out' | t }}{% raw %}{{else}}{% endraw %}{{ 'product.add_to_cart' | t }}{% raw %}{{/if}}</span>
             </button>
           </p>

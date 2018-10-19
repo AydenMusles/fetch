@@ -12,6 +12,7 @@
 "available": {{- product.available -}},
 "handle": "{{- product.handle -}}",
 "created_at": "{{- product.created_at | date -}}",
+"first_available_variant": "{{- product.first_available_variant.id -}}",
 "images": [{%- for image in product.images limit: 1 -%}{
     "src": "{{- image.src | img_url: '1024x1024' -}}"
   }{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
@@ -29,6 +30,7 @@
 "compare_at_price": {%- if product.compare_at_price -%}{{- product.compare_at_price -}}{%- else -%}null{%- endif -%},
 "tags": [{%- for tag in product.tags -%}{{- tag | json -}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
 "title": {{- product.title | json -}},
+"url": "{{- product.url -}}",
 "vendor": {%- unless product.vendor contains shop.name -%}{{- product.vendor | json -}}{%- endunless -%},
 "variants_count": {{- product.variants.size | plus: 0 -}},
 "variants": [{%- for variant in product.variants -%}

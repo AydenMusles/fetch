@@ -55,74 +55,69 @@
 
     <section data-pagination-container></section>
   </div>
-{% endpaginate %}
 
-<script type="text/javascript">
-  $(document).ready(function() {
-    {% assign url = canonical_url | remove: 'https://' | remove: shop.domain | split: 'shopifypreview.com' | last | split: '?' %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      {% assign url = canonical_url | remove: 'https://' | remove: shop.domain | split: 'shopifypreview.com' | last | split: '?' %}
 
-    // Don't load the filters inside the theme editor (it's too much for browsers to handle)
-    if (window.self == window.top) {
-      window.filters = new Fetch({
-        options: {
-          resourceUrl: '{{ url[0] }}',
-          productCount: {{ collection.products_count }},
-          paginationLimit: 250,
-          pseudoPagination: 48,
-          paginationMethod: 'paginate',
-          filterOutOfStock: {{ section.settings.sold_out }},
-          {% if url[1] != blank %}collectionQuery: '{{ url[1] | prepend: '&' }}'{% endif %}
-        },
-        filters: {
-          {% for block in section.blocks %}
-            {% assign filter_id = block.settings.title | default: block.id | handleize | replace: '-', '_' %}
-            {% if block.type == 'tag' or block.type == 'variant' %}
-              {% for i in (1..filter_settings_input_amount) %}
-                {% assign menu_key = 'menu_' | append: i %}
-                {% assign menu = linklists[block.settings[menu_key]] %}
-                {% assign filter_id = menu.title | handleize | replace: '-', '_' %}
+      // Don't load the filters inside the theme editor (it's too much for browsers to handle)
+      if (window.self == window.top) {
+        window.filters = new Fetch({
+          options: {
+            resourceUrl: '{{ url[0] }}',
+            productCount: {{ collection.products_count }},
+            paginationLimit: 250,
+            pseudoPagination: 48,
+            paginationMethod: 'paginate',
+            filterOutOfStock: {{ section.settings.sold_out }},
+            {% if url[1] != blank %}collectionQuery: '{{ url[1] | prepend: '&' }}'{% endif %}
+          },
+          filters: {
+            {% for block in section.blocks %}
+              {% assign filter_id = block.settings.title | default: block.id | handleize | replace: '-', '_' %}
+              {% if block.type == 'tag' or block.type == 'variant' %}
+                {% for i in (1..filter_settings_input_amount) %}
+                  {% assign menu_key = 'menu_' | append: i %}
+                  {% assign menu = linklists[block.settings[menu_key]] %}
+                  {% assign filter_id = menu.title | handleize | replace: '-', '_' %}
 
-                {% if menu != blank %}
-                  {% if block.type == 'tag' %}
-                    {{ filter_id }}: {
-                      type: 'tag',
-                    },
-                  {% else %}
-                    {{ filter_id }}: {
-                      type: 'variant',
-                      name: '{{ menu.title | escape }}',
-                    },
+                  {% if menu != blank %}
+                    {% if block.type == 'tag' %}
+                      {{ filter_id }}: {
+                        type: 'tag',
+                      },
+                    {% else %}
+                      {{ filter_id }}: {
+                        type: 'variant',
+                        name: '{{ menu.title | escape }}',
+                      },
+                    {% endif %}
                   {% endif %}
+                {% endfor %}
+              {% elsif block.type == 'price' %}
+                {% if block.settings.price %}
+                  {{ filter_id }}: {
+                    type: '{{ block.type }}',
+                  },
                 {% endif %}
-              {% endfor %}
-            {% elsif block.type == 'price' %}
-              {% if block.settings.price %}
+                {% if block.settings.sale %}
+                  {{ filter_id }}_sale: {
+                    type: 'sale',
+                  },
+                {% endif %}
+              {% elsif block.type == 'type' or block.type == 'vendor' %}
                 {{ filter_id }}: {
                   type: '{{ block.type }}',
+                  element: 'checkbox'
                 },
               {% endif %}
-              {% if block.settings.sale %}
-                {{ filter_id }}_sale: {
-                  type: 'sale',
-                },
-              {% endif %}
-            {% elsif block.type == 'type' or block.type == 'vendor' %}
-              {{ filter_id }}: {
-                type: '{{ block.type }}',
-                element: 'checkbox'
-              },
-            {% endif %}
-          {% endfor %}
-        },
-        firstPage: [
-          {%- for product in collection.products -%}
-            {%- include 'product-json' -%}{%- unless forloop.last -%},{%- endunless -%}
-          {%- endfor -%}
-        ]
-      });
-    }
-  });
-</script>
+            {% endfor %}
+          }
+        });
+      }
+    });
+  </script>
+{% endpaginate %}
 
 {% include 'handlebars-product' %}
 {% include 'handlebars-pagination' %}
